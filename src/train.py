@@ -9,12 +9,24 @@ def train_model(processed_data_path, model_save_path):
     # Load the processed data
     df = pd.read_csv(processed_data_path)
     
-    # The last column is the target variable
-    X = df.iloc[:, :-1]
-    y = df.iloc[:, -1]
+    # Identify non-numeric or irrelevant columns to drop from features
+    columns_to_drop = ['transaction_date', 'customer_id', 'transaction_id', 'target'] 
+    
+    # Identify categorical columns that need to be one-hot encoded
+    categorical_cols = ['gender', 'education', 'marital_status']
+    
+    # Drop irrelevant columns first
+    X = df.drop(columns=columns_to_drop, errors='ignore')
+    
+    # Perform one-hot encoding on specified categorical columns
+    X = pd.get_dummies(X, columns=categorical_cols)  # Removed drop_first=True
+    
+    # The 'is_high_risk' column is the target variable
+    y = X['is_high_risk']
+    X = X.drop(columns=['is_high_risk']) # Remove target from features
     
     # Train a simple model
-    model = LogisticRegression()
+    model = LogisticRegression(solver='liblinear', random_state=42) 
     model.fit(X, y)
     
     # Save the model

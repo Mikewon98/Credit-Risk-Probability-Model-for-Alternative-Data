@@ -4,6 +4,7 @@ from joblib import load
 import os
 import sys
 
+# Add the src directory to the Python path
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 from data_processing import create_features
 
